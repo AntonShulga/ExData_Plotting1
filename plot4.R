@@ -1,0 +1,53 @@
+## This script is creating a Plot#4 for a Course Project #1 of Exploratory 
+## Data Analysis course of Coursera. 
+
+drawChart4 <- function() {
+        
+        ## read data from file 
+        UCdata <- read.table("../../Data/household_power_consumption.txt",
+                             header = TRUE, sep = ";", na.strings = "?",
+                             comment.char = "", stringsAsFactors = FALSE,
+                             skip = 66636, nrows = 69517-66637)
+        colnames(UCdata) <- colnames(read.table("../../Data/household_power_consumption.txt",
+                                                header = TRUE, sep = ";", 
+                                                na.strings = "?",
+                                                comment.char = "", 
+                                                stringsAsFactors = FALSE,
+                                                nrows = 2))
+        
+        ## convert first two columns into date and time
+        UCdata$Time <- strptime(paste(UCdata$Date, " ", UCdata$Time), 
+                                format = "%d/%m/%Y %H:%M:%S")
+        UCdata$Date <- as.Date(UCdata$Date)
+        
+        ## draw plot in a window
+        par(mfrow = c(2,2), mar = c(4,4,3,1), cex = .65, cex.lab = 1)
+        with(UCdata, {
+                ## plot 1
+                plot(Time, Global_active_power, main = "", type = "l",
+                     xlab = "", ylab = "Global Active Power")
+                
+                ## plot 2
+                plot(Time, Voltage, main = "", type = "l",
+                     xlab = "datetime", ylab = "Voltage")
+                
+                ## plot 3
+                plot(Time, Sub_metering_1, main = "", type = "l",
+                     xlab = "", ylab = "Energy sub metering")
+                points(Time, Sub_metering_2, type = "l", col = "red")
+                points(Time, Sub_metering_3, type = "l", col = "blue")
+                legend("topright", col = c("black", "red", "blue"), 
+                       lty = c(1,1,1), legend = colnames(UCdata[,7:9]),
+                       text.width = 80000, bty = "n")
+                
+                ## plot 4
+                plot(Time, Global_reactive_power, main = "", type = "l",
+                     xlab = "datetime", ylab = "Global_reactive_power")
+        })
+        
+        
+        ## copy to PNG file
+        dev.copy(png, file = "plot4.png")
+        dev.off()
+        
+} 
